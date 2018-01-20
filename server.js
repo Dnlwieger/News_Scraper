@@ -12,9 +12,13 @@ var bodyParser = require("body-parser");
 
 // Init express
 var app = express();
+// Use body-parser for handling form submissions
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // Require all models
-var db = require("./models");
+var Article = require("./models/article.js");
+// var db = require("./models");
+ 
 
 // Setup database
 
@@ -23,7 +27,7 @@ var PORT = 8080;
 // Connect to Mongo Database
 //============================
 mongoose.Promise = Promise;
-mongoose.connect('mongodb://localhost/news', {
+mongoose.connect('mongodb://localhost/Article', {
     // useMongoClient: true
 });
 
@@ -42,21 +46,26 @@ app.get("/", function(req, res) {
             var headline = $(element).children().text();
             var link = $(element).children().find("a").attr("href");
             var summary = $(element).children().find("div").text();
-            results.push({
-                headline: headline,
-                link: link,
-                summary: summary
+                    results.push({
+                        headline: headline,
+                        link: link,
+                        summary: summary
+                    });
+                
+            Article.create(results).then(function(dbArticle) {
+                // View the added result in the console
+                console.log(dbArticle);
             });
+                
+            // .catch(function(err) {
+            //         // If an error occurred, send it to the client
+            //         return res.json(err);
+            //     });
+
         });
         console.log(results);
         
-        // Save scrape to the database
-        db.cbr.insert({
-            headline: headline,
-            link: link,
-            summary: summary
-        });
-       
+       res.send("Scrape Complete");
     });
 });    
 // Start the server
