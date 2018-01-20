@@ -19,9 +19,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 var Article = require("./models/article.js");
 // var db = require("./models");
  
-
-// Setup database
-
 var PORT = 8080;
 
 // Connect to Mongo Database
@@ -30,7 +27,6 @@ mongoose.Promise = Promise;
 mongoose.connect('mongodb://localhost/Article', {
     // useMongoClient: true
 });
-
 
 // Scrape CBR news and save to results variable.
 app.get("/", function(req, res) {
@@ -46,21 +42,20 @@ app.get("/", function(req, res) {
             var headline = $(element).children().text();
             var link = $(element).children().find("a").attr("href");
             var summary = $(element).children().find("div").text();
-                    results.push({
-                        headline: headline,
-                        link: link,
-                        summary: summary
-                    });
-                
-            Article.create(results).then(function(dbArticle) {
-                // View the added result in the console
-                console.log(dbArticle);
+            
+            results.push({
+            headline: headline,
+            link: link,
+            summary: summary
             });
                 
-            // .catch(function(err) {
-            //         // If an error occurred, send it to the client
-            //         return res.json(err);
-            //     });
+            Article.create(results).then(function(dbArticle) {
+            console.log(dbArticle);
+            })
+            .catch(function(err) {
+            // If an error occurred, send it to the client
+            return res.json(err);
+            });
 
         });
         console.log(results);
