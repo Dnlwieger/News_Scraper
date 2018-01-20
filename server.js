@@ -20,20 +20,24 @@ request("https://www.cbr.com/category/movies/news-movies/", function(error, resp
 
     // All of our headlines use the same element, but our other info does not,
     // so we do this first.
-    $("strong.title").each(function(i, element) {
-        var headline = $(element).text();
+    $("div.info-wrapper").each(function(i, element) {
+        var headline = $(element).children().text();
+        var link = $(element).children().find("a").attr("href");
+        var summary = $(element).children().find("div").text();
         results.push({
-            headline: headline
+            headline: headline,
+            link: link,
+            summary: summary
         });
     });
 
     // Now we have cheerio fetch the link for the first story
-    $("h3.header-title").each(function(i, element) {
-        var link = $(element).children().attr("href");
-        firstStory.push({
-            link: link
-        });
-    });
+    // $("h3.header-title").each(function(i, element) {
+    //     var link = $(element).children().attr("href");
+    //     firstStory.push({
+    //         link: link
+    //     });
+    // });
 
     // In the currently selected element, look at its child elements (i.e., its a-tags),
         // then save the values for any "href" attributes that the child elements may have
@@ -41,5 +45,5 @@ request("https://www.cbr.com/category/movies/news-movies/", function(error, resp
         // var summary = $(element).siblings().find("div").find("p").text();
         // push what cheerio grabs into the results array and print out our variables values
     console.log(results);
-    console.log(firstStory);
+    // console.log(firstStory);
 });
